@@ -1,0 +1,33 @@
+{
+  "name": "koa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "my-koa-app.js",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "body-parser": "^1.18.3",
+    "co-mocha": "^1.2.2",
+    "co-supertest": "0.0.10",
+    "koa": "^2.5.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-decoded-querystring": "^0.1.1",
+    "koa-jade": "^2.1.0",
+    "koa-router": "^7.4.0",
+    "mocha": "^5.2.0",
+    "monk": "^6.0.6",
+    "supertest": "^3.1.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "nodemon": "^1.17.5"
+  },
+  "scripts": {
+    "start": "node ./node_modules/nodemon/bin/nodemon.js ./node_modules/babel-cli/bin/babel-node.js ./app.js",
+    "test": "mocha ./tests/jade.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
