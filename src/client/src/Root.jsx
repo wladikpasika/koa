@@ -153,17 +153,17 @@ class Root extends Component {
   }
 
   componentDidMount() {
-
+    //this uploadDataFromIndexedDb
     //  getTasksfromIndexDb().then(( cashedTasks ) => {
     //     if(Object.keys( cashedTasks ).length){
     //     this.iterator = Math.max.apply(null, Object.keys(cashedTasks));
     //     this.props.onUpdateCashedTasks( cashedTasks );
     //   }
     //   }).catch((err)=>{ console.log(err) });
-
+    
+    //this uploaded data from MongoDb
     handleUploadCashedTask().then(result => {
        const cashedTasks = this.handleTransformDataFromMongoDb( result.data );
-       console.log(cashedTasks);
        return this.props.onUpdateCashedTasks( cashedTasks );
     }).catch(err => console.error(err));
 
