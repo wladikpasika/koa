@@ -4,7 +4,6 @@ import create from './create';
 import remove from './remove';
 import update from './update';
 import updateStatus from './updateStatus';
-
 import list from './list';
 
 export default function configureRouter() {

@@ -1,4 +1,6 @@
 export const ADD_TODO = 'ADD_TODO';
+export const ADD_TODO_IN_DB = 'ADD_TODO_IN_DB';
+
 export const UPLOAD_TODO_FROM_LOCAL_STORAGE = 'UPLOAD_TODO_FROM_LOCAL_STORAGE';
 export const REMOVE_TODO = 'REMOVE_TODO';
 export const EDIT_TODO = 'EDIT_TODO';

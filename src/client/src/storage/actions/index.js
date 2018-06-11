@@ -1,5 +1,5 @@
 export {
-    addTodo,
+    addTodoInDB,
     removeTodo,
     uploadTodoFromLocalStorage,
     editTodo,

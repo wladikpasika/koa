@@ -8,6 +8,8 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import { BrowserRouter as Router, Route, Switch, Redirect, Link, withRouter } from 'react-router-dom';
+
 
 import Style from './css/appBar.css';
 
@@ -115,6 +117,14 @@ const MenuIcon = props => (
       primaryText="ADD"
       onClick={props.callDialog}
     />
+     <MenuItem
+      primaryText="SIGN UP"
+      containerElement={<Link 
+        to="/auth"
+        pathname="/auth"
+      
+      />}
+    />
   </IconMenu>
 );
 
@@ -123,7 +133,7 @@ export default Radium((props) => (
     title="TaskBoard"
     className="app-bar"
     titleStyle={style.title}
-    style={style.appBar}
+    style={ style.appBar}
   >
     <Search {...props} />
     <MenuIcon {...props} />

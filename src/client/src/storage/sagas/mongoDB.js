@@ -9,15 +9,20 @@ import {
 } from  '../../mongoDb/';
 
 import { 
-    ADD_TODO, 
+    ADD_TODO,
+    ADD_TODO_IN_DB,
+
     REMOVE_TODO, 
-    EDIT_TODO, EDIT_STATUS, 
+    EDIT_TODO, 
+    EDIT_STATUS,
     UPLOAD_CASHED_TASKS 
 } from '../actions/actionsTypes';
 
-function* handleAdd (action = {}) {
-    const { task = {}, keyForTask } = action;
-    putTasksHandler( {[keyForTask]: task} );
+function* handleAddInDb ( action = {} ) {
+    const { task = {} } = action;
+    const { data } = yield putTasksHandler(  task  );
+    const { _id } = data; 
+    yield put({ type: ADD_TODO, task: data, keyForTask: _id });
 };
 
 function* handleRemove (action = {}) {
@@ -37,7 +42,7 @@ function* handleUpdateStatus (action = {}) {
 };
 
 export const mongoDB = function* () {
-    yield takeEvery( ADD_TODO, handleAdd );
+    yield takeEvery( ADD_TODO_IN_DB, handleAddInDb );
     yield takeEvery( REMOVE_TODO, handleRemove ); 
     yield takeEvery( EDIT_TODO, handleUpdate );
     yield takeEvery( EDIT_STATUS, handleUpdateStatus );

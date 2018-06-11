@@ -51,6 +51,7 @@ class ComponentList extends Component {
     return (
       <div className="list-item">
           {
+          
             Object.keys(tasks).map((key, index) => {
 
               if(tasks[key].status === status){

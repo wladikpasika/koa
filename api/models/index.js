@@ -1,31 +1,37 @@
-import monk from 'monk';
+import { taskModel } from './Tasks';
 
-import config from '../../config/connection';
-import { getAllTasks, setOneTask, removeOneTask, updateOneTask, updateTaskStatus } from './Tasks';
-
-
-const db = monk( config )
-
-db.then(() => {
-    console.log('Connected correctly to server');
-});
+const {
+        getAllTasks, 
+        setOneTask, 
+        removeOneTask, 
+        updateOneTask, 
+        updateTaskStatus 
+      } = taskModel;
 
 export const getTasks = () => {
-    return getAllTasks( db );
+    return getAllTasks();
 };
 
-export const createTask = ( data ) => {
-    return setOneTask( data, db );
+export const createTask = ( document ) => {
+    return setOneTask( document );
 };
 
 export const removeTask = ( key ) => {
-    return removeOneTask( key, db );
+    return removeOneTask( key );
 };
 
 export const updateTask = ( key, data ) => {
-    return updateOneTask(  key, data, db );
+    return updateOneTask(  key, data );
 };
 
 export const updateStatus = ( key, status ) => {
-    return updateTaskStatus(  key, status, db );
+    return updateTaskStatus(  key, status );
 };
+
+
+// const { taskId, name } = ctx.request.body;
+// const task = await tasks.findOne({ _id: taskId });
+// await tasks.update({ ...task, name });
+
+// const { taskId } = ctx.request.body;
+// await tasks.remove({ _id: taskId });

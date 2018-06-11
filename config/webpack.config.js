@@ -1,4 +1,3 @@
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const webpack = require('webpack');
 const path = require('path');
@@ -28,11 +27,9 @@ module.exports = {
       }
     ]
   },
-  devtool: NODE_ENV === 'development' ? 'source-map' : false,
+  devtool: 'source-map',
   devServer: {
     compress: true,
     port: 8080,
   }
 };
-
-console.log('test');

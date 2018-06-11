@@ -4,16 +4,18 @@ import Header from './Header';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+import { BrowserRouter as Router, Route, Switch, Redirect, Link, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import AddTask from './components/PromptDialogAdd';
 import EditeTask from './components/PrompDialogEdit';
 import List from './List';
+import Authenticate from './Authenticate'; 
 import AlertDeleteConfirm from './components/AlertDeleteConfirm';
-import { connect } from 'react-redux';
-import { getAllTasksHandler as getTasksfromIndexDb } from './indexedDb';
+
 import { handleUploadCashedTask } from './mongoDb'
 import { 
-  addTodo, 
+  addTodoInDB, 
   removeTodo,
   setSearchValue,
   updateFilteredTasks,
@@ -47,20 +49,18 @@ const styles = {
 
 class Root extends Component {
 
-  iterator = 0;
   handleAddItem = (values = {}) => {
     const { tasks } = this.props;
     const { title, description } = values;
     const date = new Date();
     const time  = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
-    this.iterator++;
     const newTask = {
       title,
       description,
       time,
       status:'todo'
     };
-    this.props.onAddTask(newTask, this.iterator);
+    this.props.onAddTask( newTask );
   }
 
   handleUpdateFilteretedTasks(searchValue = '', tasks) {
@@ -143,33 +143,32 @@ class Root extends Component {
     this.props.onEditStatus(status, key);
   }
 
-  handleTransformDataFromMongoDb( data ){
-    const newTasks = data.reduce((obj, current) => {
-      const { title, description, status, time } = current;
-      obj[current.id] = { title, description, status, time};
-      return obj;
-    }, {}); 
-    return newTasks;
+  handleTransformDataFromMongoDb( data = [] ){
+
+    if ( Array.isArray(data) && data.length ) {
+      const newTasks = data.reduce((obj, current) => {
+        const { title, description, status, time, _id } = current;
+        obj[_id] = { title, description, status, time};
+        return obj;
+      }, {});
+      
+      if( Object.keys( newTasks ).length ){
+             return newTasks;
+        }
+    }
   }
 
   componentDidMount() {
-    //this uploadDataFromIndexedDb
-    //  getTasksfromIndexDb().then(( cashedTasks ) => {
-    //     if(Object.keys( cashedTasks ).length){
-    //     this.iterator = Math.max.apply(null, Object.keys(cashedTasks));
-    //     this.props.onUpdateCashedTasks( cashedTasks );
-    //   }
-    //   }).catch((err)=>{ console.log(err) });
-    
-    //this uploaded data from MongoDb
     handleUploadCashedTask().then(result => {
        const cashedTasks = this.handleTransformDataFromMongoDb( result.data );
-       return this.props.onUpdateCashedTasks( cashedTasks );
+       if( Array.isArray(result.data) && result.data.length ){
+          return this.props.onUpdateCashedTasks( cashedTasks );
+       } // if cashed tasks array not empty
     }).catch(err => console.error(err));
 
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate( prevProps ) {
     const { searchValue, tasks, onUpdateFilteredTasks } = this.props;
     const copyTasks = { ...tasks };
 
@@ -183,11 +182,11 @@ class Root extends Component {
   }
 
   render() {
-  
     const { 
       confirmAlert, 
       dialogAdd, 
-      keyDeletedTask, 
+      keyDeletedTask,
+      keyEditedTask,  
       filteredTasks, 
       dialogEdit, 
       titleByDefaultEditedTask, 
@@ -236,35 +235,46 @@ class Root extends Component {
       </Table>
     );
 
+    const BodyTaskPage = () => (
+      <Fragment> 
+        <Header
+          callDialog={this.handleAddDialogCall}
+          onSearch={this.handleSearchInput}
+          onClear={this.handleClearSearchInput}
+          searchValue={this.props.searchValue}
+        />
+        <TableExampleSimple/>
+      </Fragment>
+    );
+
     return (
-      <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+      <MuiThemeProvider muiTheme={ getMuiTheme(lightBaseTheme) }> 
         <Fragment>
           <AddTask
-            open={ dialogAdd } 
-            closeDialog={ this.handleAddDialogClose }
-            onAddTask={ this.handleAddItemCheck }
-          />
-          <EditeTask
-            open={ dialogEdit }
-            onClose={ this.handleEditDialogClose }
-            onEdit={ this.handleEditTask }
-            keyEditedTask = {this.props.keyEditedTask}
-            defaultValueTitle={ titleByDefaultEditedTask }
-            defaultValueDescription={ descriptionByDefaultEditedTask }
-          />
-          <AlertDeleteConfirm
-            open={ confirmAlert }
-            onAlertConfirm={this.handleAlertConfirm}
-            allowDeletePermission={this.allowDeletePermission}
-            deletedTask={ keyDeletedTask ? filteredTasks[keyDeletedTask].title : null }
-          />
-          <Header
-            callDialog={this.handleAddDialogCall}
-            onSearch={this.handleSearchInput}
-            onClear={this.handleClearSearchInput}
-            searchValue={this.props.searchValue}
-          />
-          <TableExampleSimple />
+              open={ dialogAdd } 
+              closeDialog={ this.handleAddDialogClose }
+              onAddTask={ this.handleAddItemCheck }
+            />
+            <EditeTask
+              open={ dialogEdit }
+              onClose={ this.handleEditDialogClose }
+              onEdit={ this.handleEditTask }
+              keyEditedTask = { this.keyEditedTask }
+              defaultValueTitle={ titleByDefaultEditedTask }
+              defaultValueDescription={ descriptionByDefaultEditedTask }
+            />
+            <AlertDeleteConfirm
+              open={ confirmAlert }
+              onAlertConfirm={this.handleAlertConfirm}
+              allowDeletePermission={this.allowDeletePermission}
+              deletedTask={ keyDeletedTask ? filteredTasks[keyDeletedTask].title : null }
+            />
+            <Router>
+              <Switch>
+                <Route exact path="/" component={ BodyTaskPage }/>
+                <Route exact path="/auth" component={ Authenticate }/>
+              </Switch>
+            </Router>
         </Fragment>
       </MuiThemeProvider>
     );
@@ -287,19 +297,18 @@ const mapStatetoProps = state => (
 );
 
 const mapDispathToProps = dispatch => (
-
   {
-    onAddTask:(task, keyForTask) => dispatch( addTodo(task, keyForTask) ),
-    onRemoveTask:(key) => dispatch( removeTodo(key) ),
-    onAlertConfirmOpen: (key) => dispatch( openAlertToConfirm(key)),
+    onAddTask:( task ) => dispatch( addTodoInDB(task) ),
+    onRemoveTask:( key ) => dispatch( removeTodo(key) ),
+    onAlertConfirmOpen: ( key ) => dispatch( openAlertToConfirm(key)),
     onAlertConfirmClose: () => dispatch( closeAlertToConfirm()),
-    uploadTasksFromLocalStorage: (tasks) => dispatch( uploadTodoFromLocalStorage (tasks)),
-    onSearchInput: (value) => dispatch( setSearchValue(value)),
+    uploadTasksFromLocalStorage: ( tasks ) => dispatch( uploadTodoFromLocalStorage (tasks)),
+    onSearchInput: ( value ) => dispatch( setSearchValue(value)),
     onCloseDialogAdd: () => dispatch( closeDialogAdd() ),
     onOpenDialogAdd: () => dispatch( openDialogAdd() ),
     onCloseDialogEdit: () => dispatch( closeDialogEdit() ),
-    onOpenDialogEdit: (title, description, key) => dispatch( openDialogEdit(title, description, key) ), 
-    onUpdateFilteredTasks: (tasks) => dispatch( updateFilteredTasks(tasks) ),
+    onOpenDialogEdit: ( title, description, key ) => dispatch( openDialogEdit(title, description, key) ), 
+    onUpdateFilteredTasks: ( tasks ) => dispatch( updateFilteredTasks(tasks) ),
     onClearSearchInput: () => dispatch( clearSearchValue() ),
     onEditTask: ( title, description, keyEditedTask ) => dispatch( editTodo( title, description, keyEditedTask )),
     onEditStatus: ( newStatus, keyEditedStatus ) => dispatch( editStatus( newStatus, keyEditedStatus )),

@@ -28,7 +28,15 @@ import {
     switch (type) {
 
       case ADD_TODO: {
-        const newTasks = { ...prevState, [keyForTask]: task };
+        const { title, description, time, status, _id } = task; 
+        const newTasks = { ...prevState, [keyForTask]: {
+            title, 
+            description, 
+            time, 
+            status, 
+            _id
+          }
+        };
         return newTasks;
       }
 
@@ -52,7 +60,6 @@ import {
       }
 
       case UPLOAD_CASHED_TASKS: {
-        
         return cashedTasks;
       }
 

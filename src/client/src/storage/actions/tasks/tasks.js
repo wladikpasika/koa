@@ -5,10 +5,17 @@ import {
     EDIT_TODO,
     EDIT_STATUS,
     UPLOAD_CASHED_TASKS,
+    ADD_TODO_IN_DB,
  } from '../actionsTypes';
+
+  
 
 export const addTodo = (task, keyForTask) => {
     return { type: ADD_TODO, task, keyForTask }
+  };
+
+export const addTodoInDB = (task, keyForTask) => {
+    return { type: ADD_TODO_IN_DB, task, keyForTask }
   };
 
 export const uploadTodoFromLocalStorage = ( tasks ) => {

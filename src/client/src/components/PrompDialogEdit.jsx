@@ -16,7 +16,6 @@ export default class DialogComponent extends Component {
   }
 
   static defaultProps = {
-    defaultValue: ""
   }
 
   handleEditItems = () => {
@@ -45,13 +44,14 @@ export default class DialogComponent extends Component {
 );
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps( nextProps ) {
    if (nextProps.open && nextProps.defaultValueTitle) {
+     
       this.setState(
           { 
-          title: nextProps.defaultValueTitle,
-          description:  nextProps.defaultValueDescription
-        }
+            title: nextProps.defaultValueTitle,
+            description:  nextProps.defaultValueDescription
+          }
         );
     }
   }
@@ -59,7 +59,7 @@ export default class DialogComponent extends Component {
   render() {
     const { title, description } = this.state;
     const { open, defaultValueTitle, defaultValueDescription } = this.props;
-   
+
     const actions = [
       <FlatButton
         label="Cancel"
