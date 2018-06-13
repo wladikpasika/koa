@@ -6,7 +6,6 @@ const db = monk( config );
 
 db.then(() => console.log('Connected correctly to DB server'));
 
-
 function validate(task) {
   if (!task) {
       throw Error('');
@@ -14,11 +13,21 @@ function validate(task) {
 };
 
 export const taskModel = {
+  
+  async findOne( _id ){
+    const collection = db.get('tasks');
+      return await collection.find(
+        {
+          "_id":_id,
+          "deleted": { $ne: 1 }
+      }
+    )
+  },
 
   async getAllTasks() {
     const collection = db.get('tasks');
-      return collection.find({}, {
-        deleted: {$ne: 0}
+      return await collection.find({
+        deleted: { $ne: 1 }
       }
     );
   },
@@ -28,109 +37,44 @@ export const taskModel = {
       return await db.get('tasks').insert(document);
   },
 
-  // async update(document) {
-  //     validate(document);
-  //     return await db.get('tasks').update(document._id, document);
-  // },
+  async updateOneTask ( _id, document ){
 
-  // async remove(query) {
-  //     const tasks = await this.find(query);
+      validate( _id );
+      validate( document );
 
-  //     const ids = tasks.map(task => task._id.toString())
-  //     await db.get('tasks').update({
-  //         _id: {
-  //             $in: ids
-  //         }
-  //     }, {
-  //         updateMany: true
-  //     })
-  // },
+      const { title, description } = document;
+      const task = await taskModel.findOne( _id );
+      const newDocument = {...task[0], title, description };
+      return  db.get('tasks').update(_id, newDocument ).then( resolve =>
+        resolve.ok
+        ?newDocument
+        :resolve 
+      );
+  },
 
-  // async find(query) {
-  //     return await db.get('tasks').find({
-  //         ...query,
-  //         status: {
-  //             $ne: 0
-  //         }
-  //     })
-  // },
-  // async findOne(query) {
-  //     return await db.get('tasks').findOne({
-  //         ...query,
-  //         status: {
-  //             $ne: 0
-  //         }
-  //     })
-  // }
+  async updateTaskStatus( _id, status ){
+
+      validate( _id );
+      validate( status );
+      const task = await this.findOne( _id );
+      const newDocument = {...task[0], status};
+
+      return  db.get('tasks').update(_id, newDocument).then( resolve =>
+        resolve.ok
+        ?newDocument
+        :resolve 
+      );
+  },
+
+  async removeOneTask( _id ) {
+      validate( _id );
+      const task = await this.findOne( _id );
+      const newDocument = {...task[0], "deleted": 1};
+      return await db.get('tasks').update({ _id },  newDocument )
+      .then( resolve =>
+        resolve.ok
+        ?newDocument
+        :resolve 
+      )
+  }
 };
-
-// export const getAllTasks = (db) => {
-//   const collection = db.get('tasks');
-//     return collection.find();
-// };
-
-// export const setOneTask = (task, db) => {
-//   const collection = db.get('tasks');
-//     return collection.insert(task);
-// };
-
-// export const removeOneTask = (key, db) => {
-//   const collection = db.get('tasks');
-//   return collection.findOneAndDelete({_id: key});
-// };
-
-// export const updateOneTask = (key, data, db) =>{
-//   const collection = db.get('tasks');
-//   console.log(key, data, 'key, data,');
-//   return collection.findOneAndUpdate({_id: key}, {$set: data});
-// }
-
-// export const updateTaskStatus = (key, status, db) =>{
-//   const collection = db.get('tasks');
-//   return collection.findOneAndUpdate({_id: key}, {$set: { status }});
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export const getAllTasks = (db) => {
-//   const collection = db.get('tasks');
-//     return collection.find();
-// };
-
-// export const setOneTask = (task, db) => {
-//   const collection = db.get('tasks');
-//     return collection.insert(task);
-// };
-
-// export const removeOneTask = (key, db) => {
-//   const collection = db.get('tasks');
-//   return collection.findOneAndDelete({_id: key});
-// };
-
-// export const updateOneTask = (key, data, db) =>{
-//   const collection = db.get('tasks');
-//   console.log(key, data, 'key, data,');
-//   return collection.findOneAndUpdate({_id: key}, {$set: data});
-// }
-
-// export const updateTaskStatus = (key, status, db) =>{
-//   const collection = db.get('tasks');
-//   return collection.findOneAndUpdate({_id: key}, {$set: { status }});
-// }
-

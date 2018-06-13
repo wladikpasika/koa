@@ -5,5 +5,5 @@ export const updateTasksStatusHandler =  (key = '', status = 'todo') => {
         axiosConfig.url = '/api/task/update-status';
         axiosConfig.data = { key, status };
 
-        axios( axiosConfig );
+       return axios( axiosConfig );
 };

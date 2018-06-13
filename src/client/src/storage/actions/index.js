@@ -1,9 +1,8 @@
 export {
     addTodoInDB,
-    removeTodo,
-    uploadTodoFromLocalStorage,
-    editTodo,
-    editStatus,
+    removeTodoFromDb,
+    editTodoInDB,
+    editStatusInDB,
     uploadCashedTasks,
 } from './tasks/tasks';
 

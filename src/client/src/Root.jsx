@@ -16,12 +16,12 @@ import AlertDeleteConfirm from './components/AlertDeleteConfirm';
 import { handleUploadCashedTask } from './mongoDb'
 import { 
   addTodoInDB, 
-  removeTodo,
+  removeTodoFromDb,
   setSearchValue,
   updateFilteredTasks,
   clearSearchValue, 
-  editTodo,
-  editStatus, 
+  editTodoInDB,
+  editStatusInDB, 
   closeDialogAdd,
   openDialogAdd,
   openDialogEdit,
@@ -299,7 +299,7 @@ const mapStatetoProps = state => (
 const mapDispathToProps = dispatch => (
   {
     onAddTask:( task ) => dispatch( addTodoInDB(task) ),
-    onRemoveTask:( key ) => dispatch( removeTodo(key) ),
+    onRemoveTask:( key ) => dispatch( removeTodoFromDb(key) ),
     onAlertConfirmOpen: ( key ) => dispatch( openAlertToConfirm(key)),
     onAlertConfirmClose: () => dispatch( closeAlertToConfirm()),
     uploadTasksFromLocalStorage: ( tasks ) => dispatch( uploadTodoFromLocalStorage (tasks)),
@@ -310,8 +310,8 @@ const mapDispathToProps = dispatch => (
     onOpenDialogEdit: ( title, description, key ) => dispatch( openDialogEdit(title, description, key) ), 
     onUpdateFilteredTasks: ( tasks ) => dispatch( updateFilteredTasks(tasks) ),
     onClearSearchInput: () => dispatch( clearSearchValue() ),
-    onEditTask: ( title, description, keyEditedTask ) => dispatch( editTodo( title, description, keyEditedTask )),
-    onEditStatus: ( newStatus, keyEditedStatus ) => dispatch( editStatus( newStatus, keyEditedStatus )),
+    onEditTask: ( title, description, keyEditedTask ) => dispatch( editTodoInDB( title, description, keyEditedTask )),
+    onEditStatus: ( newStatus, keyEditedStatus ) => dispatch( editStatusInDB( newStatus, keyEditedStatus )),
     onUpdateCashedTasks: ( cashedTasks ) => dispatch( uploadCashedTasks( cashedTasks )), 
   }
 );

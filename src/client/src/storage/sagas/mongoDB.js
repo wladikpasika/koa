@@ -12,9 +12,15 @@ import {
     ADD_TODO,
     ADD_TODO_IN_DB,
 
-    REMOVE_TODO, 
-    EDIT_TODO, 
+    REMOVE_TODO,
+    REMOVE_TODO_FROM_DB,
+
+    EDIT_TODO,
+    EDIT_TODO_IN_DB,
+
     EDIT_STATUS,
+    EDIT_STATUS_IN_DB,
+
     UPLOAD_CASHED_TASKS 
 } from '../actions/actionsTypes';
 
@@ -27,23 +33,37 @@ function* handleAddInDb ( action = {} ) {
 
 function* handleRemove (action = {}) {
     const { key } = action;
-    removeTasksHandler( key );
+    const { data } = yield removeTasksHandler( key );
+    
+    if( data.deleted ){
+        return yield put({ type: REMOVE_TODO, key });
+    }
 };
 
 function* handleUpdate (action = {}) {
     const { keyEditedTask, title, description } = action;
-    const key = keyEditedTask;
-    updateTasksHandler( key, title, description );
+    const { data } = yield updateTasksHandler( keyEditedTask, title, description );
+
+    if( data.title ){
+        const { title, description, _id } = data;
+        return yield put({ type: EDIT_TODO, title, description, keyEditedTask:_id });
+    }
 };
 
 function* handleUpdateStatus (action = {}) {
     const { newStatus, keyEditedStatus } = action;
-    updateTasksStatusHandler( keyEditedStatus, newStatus );
+    const { data } = yield updateTasksStatusHandler( keyEditedStatus, newStatus );
+    
+    if( data.status ){
+        const { status,_id } = data;
+        return yield put({  type: EDIT_STATUS, newStatus: status, keyEditedStatus:_id });
+    }
+    
 };
 
 export const mongoDB = function* () {
     yield takeEvery( ADD_TODO_IN_DB, handleAddInDb );
-    yield takeEvery( REMOVE_TODO, handleRemove ); 
-    yield takeEvery( EDIT_TODO, handleUpdate );
-    yield takeEvery( EDIT_STATUS, handleUpdateStatus );
+    yield takeEvery( REMOVE_TODO_FROM_DB, handleRemove ); 
+    yield takeEvery( EDIT_TODO_IN_DB, handleUpdate );
+    yield takeEvery( EDIT_STATUS_IN_DB, handleUpdateStatus );
 };

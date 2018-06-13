@@ -1,7 +1,6 @@
 import { 
     ADD_TODO, 
     REMOVE_TODO, 
-    REMOVE_TODOS, 
     EDIT_TODO,
     EDIT_STATUS, 
     UPLOAD_TODO_FROM_LOCAL_STORAGE,

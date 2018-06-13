@@ -1,10 +1,15 @@
 export const ADD_TODO = 'ADD_TODO';
 export const ADD_TODO_IN_DB = 'ADD_TODO_IN_DB';
 
-export const UPLOAD_TODO_FROM_LOCAL_STORAGE = 'UPLOAD_TODO_FROM_LOCAL_STORAGE';
 export const REMOVE_TODO = 'REMOVE_TODO';
+export const REMOVE_TODO_FROM_DB = 'REMOVE_TODO_FROM_DB';
+
 export const EDIT_TODO = 'EDIT_TODO';
+export const EDIT_TODO_IN_DB = 'EDIT_TODO_IN_DB';
+
 export const EDIT_STATUS = 'EDIT_STATUS';
+export const EDIT_STATUS_IN_DB = 'EDIT_STATUS_IN_DB';
+
 export const CLOSE_DIALOG_ADD = 'CLOSE_DIALOG_ADD';
 export const OPEN_DIALOG_ADD = 'OPEN_DIALOG_ADD';
 export const OPEN_DIALOG_EDIT = 'OPEN_DIALOG_EDIT';
